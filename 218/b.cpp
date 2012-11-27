@@ -4,6 +4,7 @@
 using namespace std;
 
 int a[1000];
+int c[1001];
 
 int main() {
   int n, m;
@@ -11,6 +12,7 @@ int main() {
 
   for (int i = 0; i < m; i++) {
     cin >> a[i];
+    c[a[i]]++;
   }
   sort(a, a+m);
 
@@ -23,16 +25,17 @@ int main() {
   while (minq < n) {
     int add = min(a[x], n - minq);
     minq += add;
-    mintot += (add * (add + 1)) / 2;
+    // first + last * (n / 2)
+    mintot += (a[x] + (a[x] - add + 1)) * add / 2;
+    //mintot += (add * (add + 1)) / 2; // THS IS WRONG
     x++;
   }
 
-  x = m - 1;
-  while (maxq < n) {
-    int add = min(a[x], n - maxq);
+  for (int i = 1000; i >= 1; i--) {
+    int add = min(c[i], n - maxq);
+    c[i - 1] += c[i];
     maxq += add;
-    maxtot += (add * (add + 1)) / 2;
-    x--;
+    maxtot += add * i;
   }
 
   cout << maxtot << " " << mintot << endl;
