@@ -4,61 +4,32 @@
 using namespace std;
 
 int a[100000];
-int n;
-
-bool is_sorted() {
-  for (int i = 1; i < n; i++) {
-    if (a[i] < a[i - 1]) {
-      return false;
-    }
-  }
-  return true;
-}
+int b[100000];
 
 int main() {
+  int n;
   cin >> n;
 
-  int mx = a[0];
   for (int i = 0; i < n; i++) {
     cin >> a[i];
-    //if (i > 0 && a[i] == a[i - 1]) { // collapse values!
-      //i--;
-      //n--;
-    //}
+    b[i] = a[i];
   }
+  sort(b,b+n);
 
   int wrong = 0;
-  int wp[2];
-  for (int i = 1; i < n; i++) {
-    mx = max(a[i], mx);
-    if (a[i] < mx) {
+  int pi[2];
+  for (int i = 0; i < n; i++) {
+    if (a[i] != b[i]) {
       if (wrong == 2) {
-        wrong++;
-        break;
+        cout << "NO" << endl;
+        return 0;
       }
-
-      wp[wrong] = i;
+      pi[wrong] = i;
       wrong++;
     }
   }
 
-  if (wrong > 2) {
-    cout << "NO" << endl;
-    return 0;
-  }
-
-  if (wrong == 0) {
-    cout << "YES" << endl;
-    return 0;
-  }
-
-  if (wrong == 1) {
-    swap(a[wp[0]], a[wp[0] - 1]);
-  } else {
-    swap(a[wp[0] - 1], a[wp[1]]);
-  }
-
-  if (is_sorted()) {
+  if (wrong == 0 || (a[pi[0]] == b[pi[1]] && a[pi[1]] == b[pi[0]])) {
     cout << "YES" << endl;
   } else {
     cout << "NO" << endl;
