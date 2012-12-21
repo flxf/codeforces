@@ -6,6 +6,6 @@ public class A {
     Scanner in = new Scanner(System.in);
     String s = in.nextLine();
 
-    System.out.println(s.replaceAll("\\s*,", ", ").replaceAll("\\s*\\.", ". ").replaceAll("\\s*\\!", "! ").replaceAll("\\s*\\?", "? ").replaceAll("\\s+", " ").trim());
+    System.out.println(s.replaceAll("\\s*+,", ", ").replaceAll("\\s*+\\.", ". ").replaceAll("\\s*+\\!", "! ").replaceAll("\\s*+\\?", "? ").replaceAll("\\s++", " ").trim());
   }
 }
