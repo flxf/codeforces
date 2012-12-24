@@ -3,11 +3,19 @@
 
 using namespace std;
 
-int a[100000];
-int dp[100000];
+long long a[100000];
+long long sum[100000];
+
+long long range(int x, int y) {
+  if (x == 0) {
+    return sum[y];
+  }
+  return sum[y] - sum[x - 1];
+}
 
 int main() {
-  int n, k;
+  int n;
+  long long k;
   cin >> n >> k;
 
   for (int i = 0; i < n; i++) {
@@ -15,14 +23,41 @@ int main() {
   }
   sort(a, a+n);
 
-  // REVERSE THIS. SHOULD BE DISTANCE TO N OTHER THAN BUILD UP TO
-  dp[0] = 0;
+  sum[0] = a[0];
   for (int i = 1; i < n; i++) {
-    dp[i] = (a[i] - a[i - 1]) + dp[i - 1];
-    cout << dp[i] << " ";
+    sum[i] = sum[i - 1] + a[i];
   }
-  cout << endl;
 
-  LINEAR SEARCH ON K, where K elem of values given
-  BINARY SEARCH ON N
+  long long best = a[0];
+  long long bc = 1;
+
+  for (int i = 1; i < n; i++) {
+    int lo = 0;
+    int hi = i;
+    while (lo <= hi) {
+      int mid = (lo + hi) / 2;
+      long long tot = range(mid, i);
+      long long aspire = (i - mid + 1) * a[i];
+
+      if (aspire - tot <= k) {
+        hi = mid - 1;
+      } else {
+        lo = mid + 1;
+      }
+    }
+
+    if (i - lo + 1 > bc) {
+      bc = i - lo + 1;
+      best = a[i];
+    }
+
+    // lo
+    //cout << a[i] << ":" << (i - lo + 1) << endl;
+    //cout << a[i] << ":" << hi << ":" << lo << endl;
+  }
+
+  cout << bc << " " << best << endl;
+
+
+
 }
