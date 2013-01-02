@@ -1,10 +1,10 @@
-#include <iostream>
 #include <vector>
+#include <cstdio>
 
 using namespace std;
 
 int n;
-char A[5000][5000];
+char A[5000][5001];
 vector<int> G[5000];
 bool visited[5000];
 int seen[5000];
@@ -52,11 +52,11 @@ bool rec(int pos, int x) {
 }
 
 int main() {
-  cin >> n;
+  scanf("%d", &n);
 
   for (int i = 0; i < n; i++) {
+    scanf("%s", A[i]);
     for (int j = 0; j < n; j++) {
-      cin >> A[i][j];
       if (A[i][j] == '1') {
         G[i].push_back(j);
       }
@@ -82,12 +82,13 @@ int main() {
     while (true) {
       slast = cycle[cyclelen - 2];
       if (A[first][slast] == '1') {
-        cout << (first+1) << " " << (slast+1) << " " << (cycle[cyclelen - 1]+1) << endl;
+        printf("%d %d %d\n", (first+1), (slast+1), cycle[cyclelen-1]+1);
+        //cout << (first+1) << " " << (slast+1) << " " << (cycle[cyclelen - 1]+1) << endl;
         break;
       }
       cyclelen--;
     }
   } else {
-    cout << -1 << endl;
+    printf("-1\n");
   }
 }
