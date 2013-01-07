@@ -1,39 +1,33 @@
 #include <iostream>
-#include <map>
-#include <utility>
 #include <vector>
 #include <cmath>
+#include <deque>
 
 using namespace std;
 
 vector<int> G[200001];
-map<pair<int, int>, int > memo;
-int visited[200001];
-int ITER = 0;
+bool visited[200001];
+int cost[200001];
 
-int rec(int from, int ignore) {
-  visited[from] = ITER;
+bool has_visited(int n) {
+  n = (n < 0) ? n * -1 : n;
+  return visited[n];
+}
 
-  pair<int, int> p = make_pair(from, ignore);
-  if (memo.find(p) != memo.end()) {
-    return memo[p];
-  }
+int rec(int n) {
+  visited[n] = true;
 
-  int sum = 0;
-  for (int i = 0; i < G[from].size(); i++) {
-    int to = G[from][i];
-    int ato = abs(to);
-    if (ato != ignore && visited[ato] != ITER) {
-      if (to < 0) {
-        sum += 1 + rec(ato, from);
-      } else {
-        sum += rec(ato, from);
+  int cost = 0;
+  for (int i = 0; i < G[n].size(); i++) {
+    if (!has_visited(G[n][i])) {
+      if (G[n][i] < 0) {
+        cost++;
       }
+      cost += rec(abs(G[n][i]));
     }
   }
 
-  memo[make_pair(from, ignore)] = sum;
-  return sum;
+  return cost;
 }
 
 int main() {
@@ -47,22 +41,58 @@ int main() {
     G[b].push_back(-1 * a);
   }
 
-  int best = n - 1;
-  vector<int> sols;
-  for (ITER = 1; ITER <= n; ITER++) {
-    int thusly = rec(ITER, 0);
-    if (thusly == best) {
-      sols.push_back(ITER);
-    } else if (thusly < best) {
-      sols.clear();
-      sols.push_back(ITER);
-      best = thusly;
+  int start = -1;
+  for (int i = 1; i <= n; i++) {
+    if (G[i].size() == 1) {
+      start = i;
+      break;
+    }
+  }
+
+  cost[start] = rec(start);
+
+  // resetting
+  for (int i = 0; i <= n; i++) {
+    visited[i] = false;
+  }
+
+  deque<int> it;
+  it.push_back(abs(G[start][0]));
+  visited[start] = true;
+
+  while (!it.empty()) {
+    int solve = it.front();
+    it.pop_front();
+    visited[solve] = true;
+
+    for (int i = 0; i < G[solve].size(); i++) {
+      int neighbour = G[solve][i];
+      int an = (neighbour < 0) ? neighbour * -1 : neighbour;
+
+      if (has_visited(neighbour)) {
+        if (neighbour < 0) {
+          cost[solve] = cost[an] + 1;
+        } else {
+          cost[solve] = cost[an] - 1;
+        }
+      } else {
+        it.push_back(abs(neighbour));
+      }
+    }
+  }
+
+  int best = cost[1];
+  for (int i = 2; i <= n; i++) {
+    if (cost[i] < best) {
+      best = cost[i];
     }
   }
 
   cout << best << endl;
-  for (int i = 0; i < sols.size(); i++) {
-    cout << sols[i] << " ";
+  for (int i = 1; i <= n; i++) {
+    if (cost[i] == best) {
+      cout << i << " ";
+    }
   }
   cout << endl;
 }
