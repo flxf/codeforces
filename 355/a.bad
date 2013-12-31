@@ -1,0 +1,62 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+int dr(int n) {
+  if (n < 10) {
+    return n;
+  }
+
+  int sn = 0;
+  while (n != 0) {
+    sn += (n % 10);
+    n /= 10;
+  }
+
+  return dr(sn);
+}
+
+int dp[9001];
+int rem[2][9001];
+
+int main() {
+  int k, d;
+  cin >> k >> d;
+
+  if (d == 0) {
+    if (k == 1) {
+      cout << 1 << endl;
+    } else {
+      cout << 0 << endl;
+    }
+    return 0;
+  }
+
+  for (int nodiggity = 1; nodiggity <= 9; nodiggity++) {
+    rem[0][nodiggity] = 1;
+  }
+  for (int i = 1; i < k; i++) { // each digit
+    memset(rem[i % 2], 0, sizeof(int) * 9001);
+
+    for (int j = 0; j <= 9; j++) { // value of digit
+      for (int x = 9000; x >= j; x--) {
+        rem[i % 2][x] += rem[(i + 1) % 2][x - j];
+      }
+    }
+  }
+
+  for (int i = 0; i <= 9000; i++) {
+    dp[i] = dr(i);
+  }
+
+  unsigned long long cnt = 0;
+  for (int i = 0; i <= 9000; i++) {
+    if (dr(i) == d) {
+      cnt += rem[(k + 1) % 2][i];
+    }
+    //cout << i << ":" << rem[(k + 1) % 2][i] << endl;
+  }
+
+  cout << cnt << endl;
+}
